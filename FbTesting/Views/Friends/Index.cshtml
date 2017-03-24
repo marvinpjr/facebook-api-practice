@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Friends</h2>
+
+<input type="button" value="Get Friends" id="getFriendsButt" />
+
+<p id="afterclick">Click on a name to get a list of mutual friends.</p>
+<ul id="friendsList">
+    
+</ul>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("p#afterclick").hide();
+            $("input#getFriendsButt").click(function () {
+                // this is calling http://graph.facebook.com/me/friends
+                FB.api('/me/friends', function (response) {
+                    var friendHtml = "";
+                    $(response.data).each(function () {
+                        friendHtml += "<li>"
+                            + "<a href='#' id='"
+                            + this.id
+                            + "' class='getmutual'>"
+                            + this.name
+                            + "</a>"
+                            + "</li>";
+                    });
+                    $("ul#friendsList").html(friendHtml);
+                    $("p#afterclick").show();
+
+                    $("a.getmutual").click(function () {
+                        var id = $(this).attr("id");
+                        
+                        FB.api('/me/mutualfriends/'+id, function (response) {
+                            var mutualFriendHtml = "";
+                            $(response.data).each(function () {
+                                mutualFriendHtml += "<li>"
+                                    + this.name
+                                    + "</li>";
+                            });
+                            $("ul#friendsList").html(mutualFriendHtml);
+                            $("p#afterclick").hide();
+                    });
+                });
+            });
+            });
+        });
+    </script>    
+}

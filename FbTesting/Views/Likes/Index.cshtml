@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Likes</h2>
+<input type="button" value="Get Likes" id="getLikesButt" />
+
+<ul id="likeList">
+    
+</ul>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input#getLikesButt").click(function () {
+                FB.login(function (r1) {
+                    if (r1.authResponse)
+                    {
+                        getLikes();
+                    }
+                }, { scope: 'user_likes, user_interests' });
+            });
+        });
+
+        function getLikes()
+        {
+            FB.api('/me/likes', function (r2) {
+                var likeHtml = "";
+                $(r2.data).each(function () {
+                    likeHtml += "<li>" + this.name + "</li>";
+                });
+                $("ul#likeList").html(likeHtml);
+            });
+        }
+    </script>    
+}
